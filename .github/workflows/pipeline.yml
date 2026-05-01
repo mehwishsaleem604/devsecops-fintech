@@ -192,8 +192,7 @@ jobs:
             
             # Pull latest image and run
             docker pull 325087565473.dkr.ecr.us-east-1.amazonaws.com/fintech-devsecops:latest
-            docker run -d --name fintech-app -p 5000:5000 325087565473.dkr.ecr.us-east-1.amazonaws.com/fintech-devsecops:latest
+            docker run -d --name fintech-app -p 5000:5000 325087565473.dkr.ecr.us-east-1.amazonaws.com/fintech-devsecops:latest gunicorn --bind 0.0.0.0:5000 app.main:app
             
             echo "Deployment successful on EC2!"
 
-            
