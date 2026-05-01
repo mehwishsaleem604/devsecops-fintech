@@ -65,6 +65,9 @@ jobs:
       - uses: actions/download-artifact@v4
         with: { name: build-assets }
       
+      - name: Load Docker Image
+        run: docker load < image.tar.gz
+
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v2
         continue-on-error: true 
@@ -77,11 +80,12 @@ jobs:
         continue-on-error: true
 
       - name: Trivy Scan
-        run: |
-          docker load < image.tar.gz
-          # Run scan but don't fail the whole pipeline yet for HIGH/CRITICAL
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-            aquasecurity/trivy image --severity HIGH,CRITICAL $ECR_REPOSITORY:latest
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'fintech-devsecops:latest'
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '0' 
 
 # ─────────────────────────────────────────────
 # STAGE 5.5 — DAST Scan (Dev 2)
@@ -134,6 +138,3 @@ jobs:
         run: echo "PCI DSS Compliance Evaluated Successfully."
       - name: Deploy Status
         run: echo "Dev 1 tasks completed. Ready for review."
-
-
-        
