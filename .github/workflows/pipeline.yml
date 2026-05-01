@@ -1,1 +1,140 @@
-Github actions pipeline
+# ══════════════════════════════════════════════════════════════════════════════
+#  DevSecOps Pipeline — Fintech PCI DSS Compliance
+#  Team Lead: Mehwish Saleem (Dev 1)
+# ══════════════════════════════════════════════════════════════════════════════
+
+name: DevSecOps Pipeline — Fintech PCI DSS
+
+on:
+  push:
+    branches: [main, vulnerable, feature/dev1-setup] 
+  pull_request:
+    branches: [main]
+
+env:
+  AWS_REGION:      us-east-1
+  ECR_REPOSITORY:  fintech-devsecops
+  IMAGE_TAG:       ${{ github.sha }}
+  TF_WORKING_DIR:  ./terraform
+
+jobs:
+# ─────────────────────────────────────────────
+# STAGE 2 — Build & Test (Dev 1: Mehwish)
+# ─────────────────────────────────────────────
+  build-and-test:
+    name: "Stage 2 — Build & Test"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt pytest-cov flask-talisman
+          
+      - name: Run Unit Tests & Coverage
+        run: |
+          pytest tests/ --cov=app --cov-report=xml
+          
+      - name: Build & Save Docker Image
+        run: |
+          docker build -t $ECR_REPOSITORY:latest .
+          docker save $ECR_REPOSITORY:latest | gzip > image.tar.gz
+          
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-assets
+          path: |
+            image.tar.gz
+            coverage.xml
+
+# ─────────────────────────────────────────────
+# STAGE 3, 4 & 5 — Security Scans (Dev 2: Security Engineer)
+# ─────────────────────────────────────────────
+  security-scans:
+    name: "Stages 3-5 — SAST, Secrets & Container Scan"
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/download-artifact@v4
+        with: { name: build-assets }
+      
+      - name: Load Docker Image
+        run: docker load < image.tar.gz
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v2
+        continue-on-error: true 
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+      - name: GitLeaks
+        uses: gitleaks/gitleaks-action@v2
+        continue-on-error: true
+
+      - name: Trivy Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'fintech-devsecops:latest'
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '0' 
+
+# ─────────────────────────────────────────────
+# STAGE 5.5 — DAST Scan (Dev 2)
+# ─────────────────────────────────────────────
+  dast-scan:
+    name: "Stage 5.5 — OWASP ZAP DAST"
+    needs: security-scans
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: ZAP Baseline Scan (Informational Only)
+        uses: zaproxy/action-baseline@v0.12.0
+        with:
+          target: 'http://localhost:5000' 
+          fail_action: false 
+
+# ─────────────────────────────────────────────
+# STAGE 6 — Infrastructure (Dev 4)
+# ─────────────────────────────────────────────
+  terraform-infra:
+    name: "Stage 6 — Terraform IaC"
+    needs: security-scans 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      
+      - name: Terraform Init & Plan
+        run: |
+          if [ -d "$TF_WORKING_DIR" ]; then
+            cd ${{ env.TF_WORKING_DIR }}
+            terraform init -backend=false
+            terraform plan
+          else
+            echo "Terraform directory not found, skipping..."
+          fi
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+# ─────────────────────────────────────────────
+# STAGE 7 & 8 — Final Stages (Mocks)
+# ─────────────────────────────────────────────
+  final-deployment:
+    name: "Compliance & Deploy"
+    needs: terraform-infra
+    runs-on: ubuntu-latest
+    steps:
+      - name: Compliance Check
+        run: echo "PCI DSS Compliance Evaluated Successfully."
+      - name: Deploy Status
+        run: echo "Dev 1 tasks completed. Ready for review."

@@ -1,1 +1,24 @@
 
+# ══════════════════════════════════════════════════════════════════════════════
+# OWASP ZAP Scan Rules — Fintech PCI DSS Compliance (April 2026)
+# Owner: Developer 2 (Security Engineer)
+# ══════════════════════════════════════════════════════════════════════════════
+
+40018	FAIL	SQL Injection (PCI DSS 6.5.1)
+40019	FAIL	SQL Injection - MySQL
+40022	FAIL	SQL Injection - SQLite
+90020	FAIL	Remote OS Command Injection (PCI DSS 6.5.1)
+40012	FAIL	Cross Site Scripting (Reflected) (PCI DSS 6.5.7)
+40014	FAIL	Cross Site Scripting (Persistent)
+90022	FAIL	Application Error Disclosure
+10020	FAIL	X-Frame-Options Header Not Set
+10021	FAIL	X-Content-Type-Options Header Missing
+10015	FAIL	Incomplete or No Cache-control Header
+10011	FAIL	Cookie Without HttpOnly Flag
+10010	FAIL	Cookie No Secure Flag
+10202	IGNORE	Absence of Anti-CSRF Tokens
+10096	IGNORE	Timestamp Disclosure
+10024	WARN	Sensitive Information in URL
+10027	WARN	Information Disclosure - Suspicious Comments
+90011	FAIL	WSDL File Detection
+

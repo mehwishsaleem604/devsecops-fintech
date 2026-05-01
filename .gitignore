@@ -1,1 +1,43 @@
 
+# --- Python & Bytecode ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# --- Environments & Secrets (Very Important for PCI DSS) ---
+.env
+.venv/
+venv/
+env/
+instance/
+.python-version
+
+# --- Databases & Logs ---
+*.db
+*.sqlite
+*.log
+
+# --- Tests & Coverage (Developer 1 & 2) ---
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+nosetests.xml
+.tox/
+
+# --- Build Artifacts & Docker (Developer 1) ---
+*.tar.gz
+*.tar
+.dockerignore
+
+# --- Terraform (Developer 4: Infrastructure) ---
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+.terraform.lock.hcl
+
+# --- OS Specific ---
+.DS_Store
+Thumbs.db
