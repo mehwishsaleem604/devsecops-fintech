@@ -79,7 +79,7 @@ def create_app():
     return app
 
 
-def _seed_db():
+def seed_db(database):
     from werkzeug.security import generate_password_hash
     from app.models import User
     if User.query.count() == 0:
@@ -91,6 +91,6 @@ def _seed_db():
             User(username="charlie", password_hash=generate_password_hash("charlie123"),
                  email="charlie@fintech.io", balance=15000.0),
         ]
-        db.session.bulk_save_objects(users)
-        db.session.commit()
+        database.session.bulk_save_objects(users)
+        database.session.commit()
         logging.getLogger(__name__).info("Database seeded")
