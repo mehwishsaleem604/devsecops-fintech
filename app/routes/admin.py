@@ -1,9 +1,8 @@
-
 import subprocess
 import pickle
 import base64
 from flask import Blueprint, request, jsonify
-from app import db, token_required
+from app.main import db, token_required
 from app.models import User, Transaction
 from sqlalchemy import text
 
@@ -12,7 +11,6 @@ admin_bp = Blueprint("admin", __name__)
 @admin_bp.route("/api/v1/admin/report", methods=["GET"])
 @token_required
 def admin_report():
-    # VULNERABILITY V7 — Command Injection
     fmt = request.args.get("format", "json")
     result = subprocess.run(
         f"echo 'Generating report in {fmt} format'",
@@ -27,7 +25,6 @@ def admin_report():
 @admin_bp.route("/api/v1/admin/restore", methods=["POST"])
 @token_required
 def restore_session():
-    # VULNERABILITY V8 — Insecure Deserialization
     data = request.get_json()
     session_blob = data.get("session_data", "")
     try:
