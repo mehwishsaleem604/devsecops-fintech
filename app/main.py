@@ -28,16 +28,11 @@ def token_required(f):
 
 def create_app():
     app = Flask(__name__)
-    app.config["SECRET_KEY"]                    = config.SECRET_KEY
-    app.config["SQLALCHEMY_DATABASE_URI"]       = config.SQLALCHEMY_DATABASE_URI
+    app.config["SECRET_KEY"]                     = config.SECRET_KEY
+    app.config["SQLALCHEMY_DATABASE_URI"]        = config.SQLALCHEMY_DATABASE_URI
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = config.SQLALCHEMY_TRACK_MODIFICATIONS
 
     db.init_app(app)
-
- 
-    with app.app_context():
-        db.create_all()
-        _seed_db()
 
     logging.basicConfig(
         level=logging.DEBUG,
@@ -79,20 +74,3 @@ def create_app():
     app.register_blueprint(admin_bp)
 
     return app
-
-
-def _seed_db():
-    from werkzeug.security import generate_password_hash
-    from app.models import User
-    if User.query.count() == 0:
-        users = [
-            User(username="alice",   password_hash=generate_password_hash("alice123"),
-                 email="alice@fintech.io",   balance=50000.0, role="admin"),
-            User(username="bob",     password_hash=generate_password_hash("bob123"),
-                 email="bob@fintech.io",     balance=25000.0),
-            User(username="charlie", password_hash=generate_password_hash("charlie123"),
-                 email="charlie@fintech.io", balance=15000.0),
-        ]
-        db.session.bulk_save_objects(users)
-        db.session.commit()
-        logging.getLogger(__name__).info("Database seeded")

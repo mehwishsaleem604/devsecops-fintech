@@ -1,16 +1,15 @@
-
 import time
 import logging
 import jwt
 from flask import Blueprint, request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
-from app import db
+from app.main import db, token_required
 from app.models import User
 from app.metrics import LOGIN_FAILURES
 from app.config import JWT_SECRET, JWT_ALGO, JWT_EXP_SECS
 
 logger = logging.getLogger(__name__)
-auth_bp = Blueprint("auth", __name__) 
+auth_bp = Blueprint("auth", __name__)
 
 @auth_bp.route("/api/v1/auth/register", methods=["POST"])
 def register():
@@ -30,8 +29,6 @@ def register():
 
 @auth_bp.route("/api/v1/auth/login", methods=["POST"])
 def login():
-    # VULNERABILITY V5 — No rate limiting
-    # VULNERABILITY V6 — Password logged in plaintext
     data = request.get_json()
     username = data.get("username", "")
     password = data.get("password", "")
