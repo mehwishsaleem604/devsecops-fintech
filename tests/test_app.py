@@ -8,7 +8,7 @@ from app.models import User
 
 @pytest.fixture
 def client():
-    app = create_app()
+    app = create_app(testing=True)
     app.config["TESTING"] = True
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
     with app.app_context():

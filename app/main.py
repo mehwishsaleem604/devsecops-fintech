@@ -26,13 +26,17 @@ def token_required(f):
         return f(*args, **kwargs)
     return decorated
 
-def create_app():
+def create_app(testing=False):
     app = Flask(__name__)
     app.config["SECRET_KEY"]                     = config.SECRET_KEY
     app.config["SQLALCHEMY_DATABASE_URI"]        = config.SQLALCHEMY_DATABASE_URI
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = config.SQLALCHEMY_TRACK_MODIFICATIONS
 
     db.init_app(app)
+
+    if not testing:
+        with app.app_context():
+            db.create_all()
 
     logging.basicConfig(
         level=logging.DEBUG,
