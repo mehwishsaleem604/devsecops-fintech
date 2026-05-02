@@ -1,6 +1,5 @@
-
 import time
-from app import db
+from app.main import db
 
 class User(db.Model):
     __tablename__ = "users"
@@ -40,5 +39,5 @@ class Transaction(db.Model):
             "amount":      self.amount,
             "status":      self.status,
             "timestamp":   self.timestamp,
-            "card_number": self.card_number,  # PCI DSS violation
+            "card_number": self.card_number,
         }

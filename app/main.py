@@ -7,8 +7,6 @@ from flask_sqlalchemy import SQLAlchemy
 from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
 from app.metrics import REQUEST_COUNT, REQUEST_LATENCY
 import app.config as config
-from sqlalchemy import text
-
 
 db = SQLAlchemy()
 
@@ -35,9 +33,6 @@ def create_app():
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = config.SQLALCHEMY_TRACK_MODIFICATIONS
 
     db.init_app(app)
-
-    with app.app_context():
-        db.create_all()
 
     logging.basicConfig(
         level=logging.DEBUG,
@@ -79,26 +74,3 @@ def create_app():
     app.register_blueprint(admin_bp)
 
     return app
-
-
-def seed_db(database):
-    from werkzeug.security import generate_password_hash
-    from app.models import User
-    # CORRECT
-    count = database.session.execute(
-    text("SELECT COUNT(*) FROM users")
-).scalar()
-    if count == 0:
-        users = [
-            User(username="alice",   password_hash=generate_password_hash("alice123"),
-                 email="alice@fintech.io",   balance=50000.0, role="admin"),
-            User(username="bob",     password_hash=generate_password_hash("bob123"),
-                 email="bob@fintech.io",     balance=25000.0),
-            User(username="charlie", password_hash=generate_password_hash("charlie123"),
-                 email="charlie@fintech.io", balance=15000.0),
-        ]
-        database.session.bulk_save_objects(users)
-        database.session.commit()
-        logging.getLogger(__name__).info("Database seeded")
-
-        

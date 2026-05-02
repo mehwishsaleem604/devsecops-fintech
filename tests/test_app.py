@@ -13,17 +13,16 @@ def client():
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
     with app.app_context():
         db.create_all()
-        if User.query.count() == 0:
-            users = [
-                User(username="alice", password_hash=generate_password_hash("alice123"),
-                     email="alice@fintech.io", balance=50000.0, role="admin"),
-                User(username="bob", password_hash=generate_password_hash("bob123"),
-                     email="bob@fintech.io", balance=25000.0),
-                User(username="charlie", password_hash=generate_password_hash("charlie123"),
-                     email="charlie@fintech.io", balance=15000.0),
-            ]
-            db.session.bulk_save_objects(users)
-            db.session.commit()
+        users = [
+            User(username="alice", password_hash=generate_password_hash("alice123"),
+                 email="alice@fintech.io", balance=50000.0, role="admin"),
+            User(username="bob", password_hash=generate_password_hash("bob123"),
+                 email="bob@fintech.io", balance=25000.0),
+            User(username="charlie", password_hash=generate_password_hash("charlie123"),
+                 email="charlie@fintech.io", balance=15000.0),
+        ]
+        db.session.bulk_save_objects(users)
+        db.session.commit()
         yield app.test_client()
         db.drop_all()
 
