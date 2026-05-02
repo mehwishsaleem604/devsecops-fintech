@@ -1,9 +1,10 @@
 import pytest
 import sys, os
-
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from app.main import create_app, db, seed_db
+from werkzeug.security import generate_password_hash
+from app.main import create_app, db
+from app.models import User
 
 @pytest.fixture
 def client():
@@ -12,15 +13,22 @@ def client():
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
     with app.app_context():
         db.create_all()
-        seed_db(db)
+        if User.query.count() == 0:
+            users = [
+                User(username="alice", password_hash=generate_password_hash("alice123"),
+                     email="alice@fintech.io", balance=50000.0, role="admin"),
+                User(username="bob", password_hash=generate_password_hash("bob123"),
+                     email="bob@fintech.io", balance=25000.0),
+                User(username="charlie", password_hash=generate_password_hash("charlie123"),
+                     email="charlie@fintech.io", balance=15000.0),
+            ]
+            db.session.bulk_save_objects(users)
+            db.session.commit()
         yield app.test_client()
         db.drop_all()
 
 def _login(client, username="alice", password="alice123"):
-    rv = client.post(
-        "/api/v1/auth/login",
-        json={"username": username, "password": password},
-    )
+    rv = client.post("/api/v1/auth/login", json={"username": username, "password": password})
     return rv.get_json()["token"]
 
 class TestInfraEndpoints:
