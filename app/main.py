@@ -7,6 +7,8 @@ from flask_sqlalchemy import SQLAlchemy
 from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
 from app.metrics import REQUEST_COUNT, REQUEST_LATENCY
 import app.config as config
+from sqlalchemy import text
+
 
 db = SQLAlchemy()
 
@@ -82,7 +84,10 @@ def create_app():
 def seed_db(database):
     from werkzeug.security import generate_password_hash
     from app.models import User
-    if User.query.count() == 0:
+    count = database.session.execute(
+        database.text("SELECT COUNT(*) FROM users")
+    ).scalar()
+    if count == 0:
         users = [
             User(username="alice",   password_hash=generate_password_hash("alice123"),
                  email="alice@fintech.io",   balance=50000.0, role="admin"),
