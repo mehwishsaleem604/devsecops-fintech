@@ -1,10 +1,9 @@
-import json
 import pytest
 import sys, os
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from app.main import create_app, db, _seed_db
+from app.main import create_app, db, seed_db
 
 @pytest.fixture
 def client():
@@ -13,7 +12,7 @@ def client():
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
     with app.app_context():
         db.create_all()
-        _seed_db()
+        seed_db(db)
         yield app.test_client()
         db.drop_all()
 
