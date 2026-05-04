@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY", "default-dev-key-123")
-SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "sqlite:///fintech.db")
+SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "sqlite:////app/instance/fintech.db")
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY", "sk_test_placeholder")
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")

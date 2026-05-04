@@ -6,7 +6,7 @@ from flask import Flask, request, jsonify, g
 from flask_sqlalchemy import SQLAlchemy
 from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
 from app.metrics import REQUEST_COUNT, REQUEST_LATENCY
-import app.config as config
+from app import config
 
 db = SQLAlchemy()
 
@@ -35,8 +35,22 @@ def create_app(testing=False):
     db.init_app(app)
 
     if not testing:
-        with app.app_context():
-            db.create_all()
+     with app.app_context():
+        db.create_all()
+        from app.models import User
+        from werkzeug.security import generate_password_hash
+        try:
+            if User.query.count() == 0:
+                users = [
+                    User(username='alice', password_hash=generate_password_hash('alice123'), email='alice@fintech.io', balance=50000.0, role='admin'),
+                    User(username='bob', password_hash=generate_password_hash('bob123'), email='bob@fintech.io', balance=25000.0),
+                    User(username='charlie', password_hash=generate_password_hash('charlie123'), email='charlie@fintech.io', balance=15000.0),
+                ]
+                db.session.bulk_save_objects(users)
+                db.session.commit()
+        except Exception:
+            db.session.rollback()
+
 
     logging.basicConfig(
         level=logging.DEBUG,
@@ -78,3 +92,6 @@ def create_app(testing=False):
     app.register_blueprint(admin_bp)
 
     return app
+
+app = create_app()
+
