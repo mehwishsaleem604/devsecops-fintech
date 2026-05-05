@@ -242,7 +242,7 @@ Content-Type: application/json
 ### Payments (JWT token required)
 
 ```bash
-
+# Transfer funds
 POST /api/v1/payments/transfer
 Authorization: Bearer <token>
 {"receiver_id": 2, "amount": 100.0, "card_number": "4111111111111111", "cvv": "123"}
