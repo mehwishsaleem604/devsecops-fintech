@@ -78,3 +78,7 @@ def create_app(testing=False):
     app.register_blueprint(admin_bp)
 
     return app
+
+app = create_app()
+
+
