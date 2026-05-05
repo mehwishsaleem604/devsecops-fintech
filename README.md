@@ -50,49 +50,50 @@ The pipeline integrates static code analysis via SonarQube, secret detection via
 ## Pipeline Architecture
 
 Every code push to `main` triggers the following 8 stages in sequence. Any stage failure halts the pipeline and blocks deployment.
+
+```
 Code Push (GitHub)
-|
-v
+        |
+        v
 Stage 2 — Build & Test
-
-Python 3.11 setup
-pip install dependencies
-pytest with coverage report
-Docker multi-stage build
-Image saved as artifact
-|
-v
+  - Python 3.11 setup
+  - pip install dependencies
+  - pytest with coverage report
+  - Docker multi-stage build
+  - Image saved as artifact
+        |
+        v
 Stages 3-5 — Security Scans
-SonarQube SAST analysis
-GitLeaks secret detection
-Trivy container CVE scan
-|
-v
+  - SonarQube SAST analysis
+  - GitLeaks secret detection
+  - Trivy container CVE scan
+        |
+        v
 Stage 5.5 — DAST & ECR Push
-OWASP ZAP baseline scan
-AWS ECR login
-Docker image push to registry
-|
-v
+  - OWASP ZAP baseline scan
+  - AWS ECR login
+  - Docker image push to registry
+        |
+        v
 Stage 6 — Terraform IaC
-terraform init
-terraform plan
-|
-v
+  - terraform init
+  - terraform plan
+        |
+        v
 Stage 7 — PCI DSS Compliance
-OPA policy evaluation
-Compliance report generated
-|
-v
+  - OPA policy evaluation
+  - Compliance report generated
+        |
+        v
 Stage 8 — AWS Deploy
-SSH into EC2
-Pull latest image from ECR
-Run container with gunicorn
-|
-v
-Live on AWS EC2
-http://16.170.208.184:5000
-
+  - SSH into EC2
+  - Pull latest image from ECR
+  - Run container with gunicorn
+        |
+        v
+  Live on AWS EC2
+  http://16.170.208.184:5000
+```
 
 ---
 
@@ -120,6 +121,8 @@ http://16.170.208.184:5000
 ---
 
 ## Repository Structure
+
+```
 devsecops-fintech/
 ├── .github/
 │   └── workflows/
@@ -148,6 +151,7 @@ devsecops-fintech/
 ├── Dockerfile                    # Multi-stage production build
 ├── requirements.txt
 └── sonar-project.properties      # SonarQube config
+```
 
 ---
 
