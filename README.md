@@ -3,9 +3,9 @@
 > **Production-grade DevSecOps pipeline where security scanning, infrastructure provisioning, and compliance enforcement are integrated at every stage of the software delivery lifecycle.**
 
 **Team Lead / Developer 1:** Mehwish Saleem  
-**Live API:** `http://23.20.176.136:5000/health`  
+**Live API:** `http://16.170.208.184:5000/health`  
 **GitHub:** `https://github.com/mehwishsaleem604/devsecops-fintech`  
-**Cloud:** AWS EC2 (us-east-1) | **Registry:** Amazon ECR  
+**Cloud:** AWS EC2 (eu-north-1) | **Registry:** Amazon ECR  
 
 ---
 
@@ -50,50 +50,49 @@ The pipeline integrates static code analysis via SonarQube, secret detection via
 ## Pipeline Architecture
 
 Every code push to `main` triggers the following 8 stages in sequence. Any stage failure halts the pipeline and blocks deployment.
-
-```
 Code Push (GitHub)
-        |
-        v
+|
+v
 Stage 2 — Build & Test
-  - Python 3.11 setup
-  - pip install dependencies
-  - pytest with coverage report
-  - Docker multi-stage build
-  - Image saved as artifact
-        |
-        v
+
+Python 3.11 setup
+pip install dependencies
+pytest with coverage report
+Docker multi-stage build
+Image saved as artifact
+|
+v
 Stages 3-5 — Security Scans
-  - SonarQube SAST analysis
-  - GitLeaks secret detection
-  - Trivy container CVE scan
-        |
-        v
+SonarQube SAST analysis
+GitLeaks secret detection
+Trivy container CVE scan
+|
+v
 Stage 5.5 — DAST & ECR Push
-  - OWASP ZAP baseline scan
-  - AWS ECR login
-  - Docker image push to registry
-        |
-        v
+OWASP ZAP baseline scan
+AWS ECR login
+Docker image push to registry
+|
+v
 Stage 6 — Terraform IaC
-  - terraform init
-  - terraform plan
-        |
-        v
+terraform init
+terraform plan
+|
+v
 Stage 7 — PCI DSS Compliance
-  - OPA policy evaluation
-  - Compliance report generated
-        |
-        v
+OPA policy evaluation
+Compliance report generated
+|
+v
 Stage 8 — AWS Deploy
-  - SSH into EC2
-  - Pull latest image from ECR
-  - Run container with gunicorn
-        |
-        v
-  Live on AWS EC2
-  http://23.20.176.136:5000
-```
+SSH into EC2
+Pull latest image from ECR
+Run container with gunicorn
+|
+v
+Live on AWS EC2
+http://16.170.208.184:5000
+
 
 ---
 
@@ -121,8 +120,6 @@ Stage 8 — AWS Deploy
 ---
 
 ## Repository Structure
-
-```
 devsecops-fintech/
 ├── .github/
 │   └── workflows/
@@ -151,7 +148,6 @@ devsecops-fintech/
 ├── Dockerfile                    # Multi-stage production build
 ├── requirements.txt
 └── sonar-project.properties      # SonarQube config
-```
 
 ---
 
@@ -226,7 +222,7 @@ git push origin main
 
 ## API Endpoints
 
-Base URL (production): `http://23.20.176.136:5000`
+Base URL (production): `http://16.170.208.184:5000`
 
 ### Authentication
 
@@ -246,7 +242,7 @@ Content-Type: application/json
 ### Payments (JWT token required)
 
 ```bash
-# Transfer funds
+
 POST /api/v1/payments/transfer
 Authorization: Bearer <token>
 {"receiver_id": 2, "amount": 100.0, "card_number": "4111111111111111", "cvv": "123"}
@@ -300,20 +296,20 @@ The application contains **intentional vulnerabilities** for demonstration — s
 
 | Resource | Details |
 |---|---|
-| EC2 Instance ID | `i-0d3e4da1f8f864521` |
+| EC2 Instance ID | `i-09cd4bef8e8330ecb` |
 | Instance Name | Fintech-Prod-Server |
 | Instance Type | t3.micro |
-| Public IP | 23.20.176.136 |
-| Region | us-east-1 (N. Virginia) |
-| ECR Repository | `325087565473.dkr.ecr.us-east-1.amazonaws.com/fintech-devsecops` |
+| Public IP | 16.170.208.184 |
+| Region | eu-north-1 (Stockholm) |
+| ECR Repository | `075433060533.dkr.ecr.eu-north-1.amazonaws.com/fintech-devsecops` |
 | Container Port | 5000 |
-| OS | Ubuntu 26.04 LTS |
+| OS | Ubuntu 22.04 LTS |
 
 ---
 
 ## Monitoring & Observability
 
-Prometheus metrics are available live at `http://23.20.176.136:5000/metrics`
+Prometheus metrics are available live at `http://16.170.208.184:5000/metrics`
 
 | Metric | Type | Description |
 |---|---|---|
@@ -333,4 +329,3 @@ docker-compose up -d
 ---
 
 *Prepared by Mehwish Saleem — DevOps Engineer | DevSecOps Fintech Project | May 2026*
-
