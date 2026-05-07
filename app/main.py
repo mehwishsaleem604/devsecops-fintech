@@ -34,6 +34,9 @@ def create_app(testing=False):
 
     db.init_app(app)
 
+    from flask_cors import CORS
+    CORS(app, origins="*")
+
     if not testing:
         with app.app_context():
             db.create_all()
