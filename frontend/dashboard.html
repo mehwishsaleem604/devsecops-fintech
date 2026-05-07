@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinTech Pro — Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="dashboard">
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-icon">🏦</div>
+      <span class="sidebar-brand-name">FinTech Pro</span>
+    </div>
+
+    <div class="sidebar-label">Main</div>
+    <a class="nav-item" id="nav-dashboard" onclick="showPage('dashboard')">
+      <span class="nav-icon">📊</span> Dashboard
+    </a>
+    <a class="nav-item" id="nav-transfer" onclick="showPage('transfer')">
+      <span class="nav-icon">💸</span> Transfer
+    </a>
+    <a class="nav-item" id="nav-history" onclick="showPage('history')">
+      <span class="nav-icon">📋</span> History
+    </a>
+    <a class="nav-item" id="nav-users" onclick="showPage('users')">
+      <span class="nav-icon">👥</span> Users
+    </a>
+
+    <div class="sidebar-label">DevSecOps</div>
+    <a class="nav-item" id="nav-pipeline" onclick="showPage('pipeline')">
+      <span class="nav-icon">⚙️</span> Pipeline
+    </a>
+    <a class="nav-item" id="nav-security" onclick="showPage('security')">
+      <span class="nav-icon">🛡️</span> Security Demo
+    </a>
+
+    <div class="sidebar-user">
+      <div class="user-avatar" id="user-avatar-text">A</div>
+      <div class="user-info">
+        <div class="user-name" id="sidebar-username">Loading...</div>
+        <div class="user-role" id="sidebar-userid">ID: —</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main Content ── -->
+  <div class="main-content">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1 id="topbar-title">Dashboard</h1>
+        <p id="topbar-sub">Welcome to your FinTech dashboard</p>
+      </div>
+      <div class="topbar-right">
+        <div class="status-pill">
+          <div class="status-dot"></div>
+          Live on AWS EC2
+        </div>
+        <button class="btn-logout" onclick="doLogout()">Logout</button>
+      </div>
+    </div>
+
+    <!-- ── PAGE: Dashboard ── -->
+    <div class="page" id="page-dashboard">
+
+      <div class="health-banner">
+        <div class="status-dot" style="width:10px;height:10px"></div>
+        <div>
+          <div style="font-size:14px;font-weight:600;color:#34d399" id="health-status">Checking API...</div>
+        </div>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-label">Total Balance</span>
+            <div class="metric-icon blue">💰</div>
+          </div>
+          <div class="metric-value" id="dash-balance">$0.00</div>
+          <div class="metric-change up" id="dash-balance-sub">Loading...</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-label">Transactions</span>
+            <div class="metric-icon green">✅</div>
+          </div>
+          <div class="metric-value" id="dash-tx-count">—</div>
+          <div class="metric-change up">All completed</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-label">Pipeline</span>
+            <div class="metric-icon purple">🔧</div>
+          </div>
+          <div class="metric-value">6/6</div>
+          <div class="metric-change up">All stages green</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-label">Compliance</span>
+            <div class="metric-icon yellow">🛡️</div>
+          </div>
+          <div class="metric-value">PCI DSS</div>
+          <div class="metric-change up">Compliant</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><span class="card-icon">📋</span> Recent Transactions</div>
+            <button class="btn btn-outline" style="padding:6px 12px;font-size:12px" onclick="showPage('history')">View All</button>
+          </div>
+          <div class="tx-list" id="dash-tx-list">
+            <p style="color:var(--text-secondary);font-size:13px;padding:8px 0">Loading...</p>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-header">
+              <div class="card-title"><span class="card-icon">⚡</span> Quick Actions</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <button class="btn btn-primary" style="justify-content:flex-start" onclick="showPage('transfer')">💸 Send Money</button>
+              <button class="btn btn-outline" style="justify-content:flex-start" onclick="showPage('history')">📋 View History</button>
+              <button class="btn btn-outline" style="justify-content:flex-start" onclick="showPage('users')">👥 View Users</button>
+              <button class="btn btn-outline" style="justify-content:flex-start" onclick="showPage('pipeline')">⚙️ Pipeline Status</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PAGE: Transfer ── -->
+    <div class="page" id="page-transfer">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><span class="card-icon">💸</span> Send Money</div>
+            <span class="badge badge-blue">JWT Protected</span>
+          </div>
+
+          <div id="transfer-alert" class="alert"></div>
+
+          <div class="form-group">
+            <label class="form-label">Receiver User ID</label>
+            <input class="form-input" id="xfer-receiver" type="number" placeholder="Enter receiver's user ID">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Amount</label>
+            <div class="input-group">
+              <span class="input-prefix">$</span>
+              <input class="form-input" id="xfer-amount" type="number" placeholder="0.00" step="0.01" oninput="updateSummary()">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Card Number</label>
+              <input class="form-input" id="xfer-card" placeholder="16-digit card number" maxlength="16">
+            </div>
+            <div class="form-group">
+              <label class="form-label">CVV</label>
+              <input class="form-input" id="xfer-cvv" placeholder="3 digits" maxlength="3">
+            </div>
+          </div>
+
+          <div class="transfer-summary">
+            <div class="summary-row"><span>Amount</span><span id="summary-amount">$0.00</span></div>
+            <div class="summary-row"><span>Fee</span><span id="summary-fee">$0.00</span></div>
+            <div class="summary-row total"><span>Total</span><span id="summary-total">$0.00</span></div>
+          </div>
+
+          <button class="btn btn-primary" id="transfer-btn" onclick="doTransfer()">
+            <span class="spinner" id="transfer-spinner"></span>
+            Send Transfer →
+          </button>
+        </div>
+
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-title" style="margin-bottom:16px"><span class="card-icon">👥</span> Available Users</div>
+            <div id="transfer-users-list" style="display:flex;flex-direction:column;gap:8px">
+              <p style="font-size:13px;color:var(--text-secondary)">Loading users...</p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title" style="margin-bottom:12px"><span class="card-icon">🔒</span> Security Info</div>
+            <p style="font-size:13px;color:var(--text-secondary);line-height:1.7">This endpoint is protected by JWT Bearer token authentication. Every transfer requires a valid session token issued at login.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PAGE: History ── -->
+    <div class="page" id="page-history">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="card-icon">📋</span> Transaction History</div>
+          <button class="btn btn-outline" style="padding:7px 16px;font-size:13px" onclick="loadHistory()">🔄 Refresh</button>
+        </div>
+        <div class="tx-list" id="history-list">
+          <p style="color:var(--text-secondary);padding:16px">Loading transactions...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PAGE: Users ── -->
+    <div class="page" id="page-users">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="card-icon">👥</span> Registered Users</div>
+          <span class="badge badge-success" id="users-count-badge">Loading...</span>
+        </div>
+        <div class="users-grid" id="users-grid">
+          <p style="color:var(--text-secondary);font-size:13px">Loading users...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PAGE: Pipeline ── -->
+    <div class="page" id="page-pipeline">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="card-icon">⚙️</span> GitHub Actions Pipeline</div>
+          <span class="badge badge-success">All Green ✓</span>
+        </div>
+        <div class="pipeline-grid">
+          <div class="stage-item">
+            <div class="stage-num">2</div>
+            <div class="stage-info">
+              <div class="stage-name">Build & Test</div>
+              <div class="stage-desc">Python 3.11 · pytest · Docker multi-stage build</div>
+            </div>
+            <span class="stage-check">✓</span>
+          </div>
+          <div class="stage-item">
+            <div class="stage-num">3-5</div>
+            <div class="stage-info">
+              <div class="stage-name">Security Scans</div>
+              <div class="stage-desc">SonarQube SAST · GitLeaks · Trivy CVE scan</div>
+            </div>
+            <span class="stage-check">✓</span>
+          </div>
+          <div class="stage-item">
+            <div class="stage-num">5.5</div>
+            <div class="stage-info">
+              <div class="stage-name">DAST & ECR Push</div>
+              <div class="stage-desc">OWASP ZAP dynamic scan · AWS ECR push</div>
+            </div>
+            <span class="stage-check">✓</span>
+          </div>
+          <div class="stage-item">
+            <div class="stage-num">6</div>
+            <div class="stage-info">
+              <div class="stage-name">Terraform IaC</div>
+              <div class="stage-desc">terraform init & plan — infrastructure validation</div>
+            </div>
+            <span class="stage-check">✓</span>
+          </div>
+          <div class="stage-item">
+            <div class="stage-num">7</div>
+            <div class="stage-info">
+              <div class="stage-name">PCI DSS Compliance</div>
+              <div class="stage-desc">OPA Rego policy evaluation — 8 controls checked</div>
+            </div>
+            <span class="stage-check">✓</span>
+          </div>
+          <div class="stage-item">
+            <div class="stage-num">8</div>
+            <div class="stage-info">
+              <div class="stage-name">AWS Deploy</div>
+              <div class="stage-desc">SSH → EC2 → pull ECR image → run gunicorn</div>
+            </div>
+            <span class="stage-check">✓</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PAGE: Security ── -->
+    <div class="page" id="page-security">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="card-icon">🛡️</span> Intentional Security Vulnerabilities</div>
+          <span class="badge badge-failed">7 Vulns — Caught by Pipeline</span>
+        </div>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:20px;line-height:1.6">
+          These vulnerabilities are <strong style="color:var(--accent-yellow)">intentional</strong> — they demonstrate the DevSecOps pipeline catching real security issues before production deployment.
+        </p>
+        <div class="vuln-grid">
+          <div class="vuln-item"><div class="vuln-id">V1</div><div class="vuln-info"><div class="vuln-name">SQL Injection</div><div class="vuln-endpoint">GET /api/v1/users/search?q=</div></div><span class="badge badge-failed">REQ-6.5.1</span></div>
+          <div class="vuln-item"><div class="vuln-id">V4</div><div class="vuln-info"><div class="vuln-name">IDOR — No Ownership Check</div><div class="vuln-endpoint">GET /api/v1/users/&lt;id&gt;</div></div><span class="badge badge-failed">REQ-6.5</span></div>
+          <div class="vuln-item"><div class="vuln-id">V5</div><div class="vuln-info"><div class="vuln-name">No Rate Limiting on Login</div><div class="vuln-endpoint">POST /api/v1/auth/login</div></div><span class="badge badge-failed">REQ-8.2</span></div>
+          <div class="vuln-item"><div class="vuln-id">V6</div><div class="vuln-info"><div class="vuln-name">Password Logged in Plaintext</div><div class="vuln-endpoint">POST /api/v1/auth/login</div></div><span class="badge badge-failed">REQ-2.2</span></div>
+          <div class="vuln-item"><div class="vuln-id">V6</div><div class="vuln-info"><div class="vuln-name">CVV Stored in Database</div><div class="vuln-endpoint">POST /api/v1/payments/transfer</div></div><span class="badge badge-failed">REQ-3.3</span></div>
+          <div class="vuln-item"><div class="vuln-id">V7</div><div class="vuln-info"><div class="vuln-name">OS Command Injection</div><div class="vuln-endpoint">GET /api/v1/admin/report?format=</div></div><span class="badge badge-failed">REQ-6.5.1</span></div>
+          <div class="vuln-item"><div class="vuln-id">V8</div><div class="vuln-info"><div class="vuln-name">Insecure Deserialization (pickle)</div><div class="vuln-endpoint">POST /api/v1/admin/restore</div></div><span class="badge badge-failed">REQ-6.5</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="card-icon">✅</span> PCI DSS OPA Compliance Results</div>
+          <span class="badge badge-success">COMPLIANT</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg-card2);border-radius:10px"><span style="font-size:13px;font-family:monospace">sast_passed</span><span style="font-size:12px;color:var(--text-secondary)">REQ-6.3</span><span class="badge badge-success">✓ Pass</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg-card2);border-radius:10px"><span style="font-size:13px;font-family:monospace">secret_scan_passed</span><span style="font-size:12px;color:var(--text-secondary)">REQ-2.2</span><span class="badge badge-success">✓ Pass</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg-card2);border-radius:10px"><span style="font-size:13px;font-family:monospace">container_scan_passed</span><span style="font-size:12px;color:var(--text-secondary)">REQ-6.3</span><span class="badge badge-success">✓ Pass</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg-card2);border-radius:10px"><span style="font-size:13px;font-family:monospace">dast_passed</span><span style="font-size:12px;color:var(--text-secondary)">REQ-11.3</span><span class="badge badge-success">✓ Pass</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg-card2);border-radius:10px"><span style="font-size:13px;font-family:monospace">auth_required</span><span style="font-size:12px;color:var(--text-secondary)">REQ-8.2</span><span class="badge badge-success">✓ Pass</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+const API = 'http://16.170.208.184:5000';
+
+initDashboard();
+
+async function loadDashboardData() {
+  const token = getToken();
+  const user = getUser();
+  try {
+    const res = await fetch(API + '/api/v1/payments/history/' + user.user_id, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    const data = await res.json();
+    if (res.ok) {
+      const txns = data.transactions || [];
+      document.getElementById('dash-tx-count').textContent = txns.length;
+      const list = document.getElementById('dash-tx-list');
+      if (txns.length === 0) {
+        list.innerHTML = '<p style="color:var(--text-secondary);font-size:13px;padding:8px 0">No transactions yet. Make your first transfer!</p>';
+        return;
+      }
+      list.innerHTML = txns.slice(0, 4).map(t => {
+        const isSent = t.sender_id === user.user_id;
+        const date = new Date(t.timestamp * 1000).toLocaleDateString();
+        return `<div class="tx-item">
+          <div class="tx-avatar ${isSent ? 'sent' : 'recv'}">${isSent ? '↑' : '↓'}</div>
+          <div class="tx-info">
+            <div class="tx-name">${isSent ? 'Sent to User #' + t.receiver_id : 'Received from User #' + t.sender_id}</div>
+            <div class="tx-date">${date} · Tx #${t.id}</div>
+          </div>
+          <div>
+            <div class="tx-amount ${isSent ? 'sent' : 'recv'}">${isSent ? '-' : '+'}$${Number(t.amount).toFixed(2)}</div>
+            <span class="badge badge-${t.status === 'completed' ? 'success' : 'pending'}" style="margin-top:4px;display:block;text-align:right">${t.status}</span>
+          </div>
+        </div>`;
+      }).join('');
+    }
+  } catch {}
+}
+
+async function loadUsersPage() {
+  const token = getToken();
+  const user = getUser();
+  try {
+    const res = await fetch(API + '/api/v1/users/' + user.user_id, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    const me = await res.json();
+    if (res.ok) {
+      document.getElementById('dash-balance').textContent = '$' + Number(me.balance).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+      document.getElementById('dash-balance-sub').textContent = 'Available balance';
+    }
+  } catch {}
+
+  try {
+    const usersRes = await fetch(API + '/api/v1/users/search?q=', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    const usersData = await usersRes.json();
+    if (usersRes.ok) {
+      const users = usersData.results || [];
+      document.getElementById('users-count-badge').textContent = users.length + ' Active';
+      const grid = document.getElementById('users-grid');
+      if (users.length === 0) {
+        grid.innerHTML = '<p style="color:var(--text-secondary);font-size:13px">No users found.</p>';
+        return;
+      }
+      grid.innerHTML = users.map(u => `
+        <div class="user-card">
+          <div class="user-card-avatar">${u.username.charAt(0).toUpperCase()}</div>
+          <div class="user-card-name">${u.username}</div>
+          <div class="user-card-email">${u.email}</div>
+          <div class="user-card-balance">$${Number(u.balance).toLocaleString('en-US', {minimumFractionDigits:2})}</div>
+          <span class="badge badge-${u.id == user.user_id ? 'blue' : 'pending'}" style="margin-top:4px">${u.id == user.user_id ? 'You' : 'User'} · ID: ${u.id}</span>
+        </div>`).join('');
+
+      const transferList = document.getElementById('transfer-users-list');
+      if (transferList) {
+        const others = users.filter(u => u.id != user.user_id);
+        if (others.length === 0) {
+          transferList.innerHTML = '<p style="font-size:13px;color:var(--text-secondary)">No other users available.</p>';
+        } else {
+          transferList.innerHTML = others.map(u => `
+            <div style="padding:12px;background:var(--bg-card2);border-radius:10px;cursor:pointer"
+              onclick="document.getElementById('xfer-receiver').value=${u.id}">
+              <div style="font-size:14px;font-weight:600">${u.username} — ID: ${u.id}</div>
+              <div style="font-size:12px;color:var(--text-secondary);margin-top:2px">${u.email}</div>
+            </div>`).join('');
+        }
+      }
+    }
+  } catch {}
+}
+
+const _origInit = initDashboard;
+function initDashboard() {
+  const token = getToken();
+  if (!token) { window.location.href = 'index.html'; return; }
+  const user = getUser();
+  document.getElementById('sidebar-username').textContent = user.username || 'User';
+  document.getElementById('sidebar-userid').textContent = 'ID: ' + (user.user_id || '?');
+  document.getElementById('user-avatar-text').textContent = (user.username || 'U').charAt(0).toUpperCase();
+  checkHealth();
+  showPage('dashboard');
+  loadDashboardData();
+  loadUsersPage();
+}
+</script>
+</body>
+</html>
