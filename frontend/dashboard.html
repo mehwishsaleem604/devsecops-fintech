@@ -329,8 +329,6 @@
 <script>
 const API = 'http://16.170.208.184:5000';
 
-initDashboard();
-
 async function loadDashboardData() {
   const token = getToken();
   const user = getUser();
@@ -420,19 +418,10 @@ async function loadUsersPage() {
   } catch {}
 }
 
-const _origInit = initDashboard;
-function initDashboard() {
-  const token = getToken();
-  if (!token) { window.location.href = 'index.html'; return; }
-  const user = getUser();
-  document.getElementById('sidebar-username').textContent = user.username || 'User';
-  document.getElementById('sidebar-userid').textContent = 'ID: ' + (user.user_id || '?');
-  document.getElementById('user-avatar-text').textContent = (user.username || 'U').charAt(0).toUpperCase();
-  checkHealth();
-  showPage('dashboard');
-  loadDashboardData();
-  loadUsersPage();
-}
+initDashboard();
+loadDashboardData();
+loadUsersPage();
 </script>
 </body>
 </html>
+
