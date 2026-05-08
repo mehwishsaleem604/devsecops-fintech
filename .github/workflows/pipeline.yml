@@ -81,16 +81,52 @@ jobs:
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Trivy Vulnerability Scan (SCA)
+      - name: Save GitLeaks Report
+        if: always()
+        run: |
+          if [ -f results.sarif ]; then
+            cp results.sarif reports/gitleaks-report.json
+          else
+            echo '{"version":"2.1.0","runs":[{"results":[],"tool":{"driver":{"name":"gitleaks"}}}]}' > reports/gitleaks-report.json
+          fi
+      - name: Stage 5 — Trivy Container Scan (table display)
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'fintech-devsecops:latest'
           format: 'table'
           severity: 'CRITICAL,HIGH'
-          exit-code: '1' 
+          exit-code: '1'
           ignore-unfixed: true
           trivyignores: '.trivyignore'
+
+      - name: Trivy Vulnerability Scan (SCA)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'fintech-devsecops:latest'
+          format: 'json'
+          output: 'reports/trivy-report.json'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '0' 
+          ignore-unfixed: true
+          trivyignores: '.trivyignore'
+
+      - name: Upload Security Reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-reports
+          path: reports/
+          
+      - name: Commit Security Reports to Repo
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add reports/
+          git diff --staged --quiet || git commit -m "ci: update security scan reports [skip ci]"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 # ─────────────────────────────────────────────
 # STAGE 5.5 — DAST & Push to ECR
@@ -120,6 +156,26 @@ jobs:
           target: 'http://localhost:5000/api/v1/auth/login' 
           fail_action: false 
 
+      - name: Save ZAP JSON Report
+        if: always()
+        run: |
+          if [ -f report_json.json ]; then
+            cp report_json.json reports/zap-report.json
+          else
+            echo '{"site":[],"@version":"2.14.0","@generated":"N/A"}' > reports/zap-report.json
+          fi
+
+      - name: Commit ZAP Report to Repo
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add reports/zap-report.json
+          git diff --staged --quiet || git commit -m "ci: update ZAP scan report [skip ci]"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
@@ -135,6 +191,13 @@ jobs:
           docker tag ${{ env.ECR_REPOSITORY }}:latest $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:latest
           docker tag ${{ env.ECR_REPOSITORY }}:latest $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
           docker push $ECR_REGISTRY/${{ env.ECR_REPOSITORY }} --all-tags
+
+      - name: Upload ZAP Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: zap-report
+          path: reports/zap-report.json
 
 # ─────────────────────────────────────────────
 # STAGE 6 — Infrastructure (Terraform)
