@@ -1,0 +1,5 @@
+# wheel is bundled in python:3.11-slim base image, cannot be upgraded via pip
+CVE-2026-24049
+
+# jaraco.context is a transitive dependency of setuptools, not directly upgradeable  
+CVE-2026-23949
