@@ -124,7 +124,10 @@ function initDashboard() {
   document.getElementById('user-avatar-text').textContent = (user.username || 'U').charAt(0).toUpperCase();
   checkHealth();
   showPage('dashboard');
+  if (typeof loadDashboardData === 'function') loadDashboardData();
+  if (typeof loadUsersPage === 'function') loadUsersPage();
 }
+
 
 // ── HEALTH CHECK ──────────────────────────────────────────
 async function checkHealth() {
