@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinTech Pro — Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="login-page">
+  <div class="login-bg"></div>
+
+  <div class="login-grid">
+    <!-- Left Panel -->
+    <div class="login-left">
+      <div class="brand-logo">
+        <div class="brand-icon">🏦</div>
+        <span class="brand-name">FinTech Pro</span>
+      </div>
+      <h2>Your Money,<br>Secured & Compliant</h2>
+      <p>A modern fintech platform with enterprise-grade security, real-time payments, and full regulatory compliance built into every layer.</p>
+      <div class="feature-list">
+        <div class="feature-item"><div class="feature-dot"></div>Secure JWT Authentication</div>
+        <div class="feature-item"><div class="feature-dot"></div>Real-time Fund Transfers</div>
+        <div class="feature-item"><div class="feature-dot"></div>Full Transaction History</div>
+        <div class="feature-item"><div class="feature-dot"></div>PCI DSS Compliance</div>
+        <div class="feature-item"><div class="feature-dot"></div>Multi-user Account Support</div>
+        <div class="feature-item"><div class="feature-dot"></div>Live Cloud Deployment</div>
+      </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="login-right">
+      <div style="display:flex;gap:0;margin-bottom:28px;border:1px solid var(--border);border-radius:10px;overflow:hidden">
+        <button id="tab-login" onclick="switchTab('login')"
+          style="flex:1;padding:10px;background:var(--accent);color:#fff;border:none;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s">
+          Login
+        </button>
+        <button id="tab-register" onclick="switchTab('register')"
+          style="flex:1;padding:10px;background:transparent;color:var(--text-secondary);border:none;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s">
+          Register
+        </button>
+      </div>
+
+      <!-- Login Form -->
+      <div id="form-login">
+        <h3>Welcome Back</h3>
+        <p class="subtitle">Sign in to your account</p>
+
+        <div id="login-alert" class="alert"></div>
+
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input class="form-input" id="username" placeholder="Enter your username" autocomplete="username">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" id="password" placeholder="Enter your password" autocomplete="current-password">
+        </div>
+
+        <button class="btn btn-primary" id="login-btn" onclick="doLogin()">
+          <span class="spinner" id="login-spinner"></span>
+          Sign In →
+        </button>
+
+        <p style="font-size:13px;color:var(--text-secondary);margin-top:16px;text-align:center">
+          Don't have an account? <span style="color:var(--accent);cursor:pointer" onclick="switchTab('register')">Register here</span>
+        </p>
+      </div>
+
+      <!-- Register Form -->
+      <div id="form-register" style="display:none">
+        <h3>Create Account</h3>
+        <p class="subtitle">Register to get started</p>
+
+        <div id="register-alert" class="alert"></div>
+
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input class="form-input" id="reg-username" placeholder="Choose a username">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" id="reg-email" placeholder="your@email.com">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" id="reg-password" placeholder="Choose a strong password">
+        </div>
+
+        <button class="btn btn-primary" id="reg-btn" onclick="doRegister()">
+          <span class="spinner" id="reg-spinner"></span>
+          Create Account →
+        </button>
+
+        <p style="font-size:13px;color:var(--text-secondary);margin-top:16px;text-align:center">
+          Already have an account? <span style="color:var(--accent);cursor:pointer" onclick="switchTab('login')">Sign in</span>
+        </p>
+      </div>
+
+      <p style="font-size:12px;color:var(--text-muted);margin-top:24px;text-align:center">
+        PCI DSS Compliant · Secured by DevSecOps Pipeline · AWS EC2
+      </p>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+  if (localStorage.getItem('ft_token')) window.location.href = 'dashboard.html';
+
+  function switchTab(tab) {
+    const isLogin = tab === 'login';
+    document.getElementById('form-login').style.display = isLogin ? 'block' : 'none';
+    document.getElementById('form-register').style.display = isLogin ? 'none' : 'block';
+    document.getElementById('tab-login').style.background = isLogin ? 'var(--accent)' : 'transparent';
+    document.getElementById('tab-login').style.color = isLogin ? '#fff' : 'var(--text-secondary)';
+    document.getElementById('tab-register').style.background = isLogin ? 'transparent' : 'var(--accent)';
+    document.getElementById('tab-register').style.color = isLogin ? 'var(--text-secondary)' : '#fff';
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      if (document.getElementById('form-login').style.display !== 'none') doLogin();
+      else doRegister();
+    }
+  });
+</script>
+</body>
+</html>

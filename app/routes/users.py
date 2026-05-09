@@ -21,8 +21,9 @@ def search_users():
     q = request.args.get("q", "")
     raw_sql = f"SELECT id, username, email, balance FROM users WHERE username LIKE '%{q}%'"
     logger.warning("Executing raw SQL: %s", raw_sql)
-    conn = sqlite3.connect("instance/fintech.db")
-    cursor = conn.execute(raw_sql)
-    rows = [dict(zip([d[0] for d in cursor.description], row)) for row in cursor.fetchall()]
-    conn.close()
+    from sqlalchemy import text
+    from app.main import db
+    result = db.session.execute(text(f"SELECT id, username, email, balance FROM users WHERE username LIKE '%{q}%'"))
+    rows = [dict(row._mapping) for row in result]
     return jsonify({"results": rows, "count": len(rows)})
+
