@@ -10,7 +10,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+RUN pip install --no-cache-dir --prefix=/install -r requirements.txt && \
+    pip install --no-cache-dir --prefix=/install "wheel==0.46.2"
 
 # ─────────────────────────────────────────────
 # Stage 2: Runtime Stage
@@ -26,6 +27,7 @@ RUN groupadd -r appgroup && useradd -r -g appgroup appuser
 WORKDIR /app
 
 COPY --from=builder /install /usr/local
+RUN pip install --no-cache-dir "wheel==0.46.2"
 
 COPY . /app/
 

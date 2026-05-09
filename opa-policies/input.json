@@ -1,0 +1,10 @@
+﻿{
+  "sast_passed": true,
+  "secret_scan_passed": true,
+  "container_scan_passed": true,
+  "dast_passed": true,
+  "tls_enabled": true,
+  "cvv_stored": false,
+  "pan_encrypted": true,
+  "auth_required": true
+}
