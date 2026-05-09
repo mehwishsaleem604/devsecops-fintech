@@ -173,7 +173,9 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git stash
           git pull --rebase origin ${{ github.ref_name }}
+          git stash pop
           git add reports/zap-report.json
           git diff --staged --quiet || git commit -m "ci: update ZAP scan report [skip ci]"
           git push
