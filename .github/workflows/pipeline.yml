@@ -7,7 +7,7 @@ name: DevSecOps Pipeline — Fintech PCI DSS
 
 on:
   push:
-    branches: [main, vulnerable, feature/dev1-setup, dev2-security] 
+    branches: [main, vulnerable, feature/dev1-setup, dev2-security,fix/sonarcloud-secrets] 
   pull_request:
     branches: [main]
 
