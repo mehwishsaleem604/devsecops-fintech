@@ -1,4 +1,4 @@
-const API = 'http://16.170.208.184:5000';
+const API = 'http://13.61.49.83:5000';
 
 // ── Auth helpers ──────────────────────────────────────────
 function getToken() { return localStorage.getItem('ft_token'); }
